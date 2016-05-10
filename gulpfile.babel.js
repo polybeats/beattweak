@@ -17,7 +17,7 @@ import runSequence from 'run-sequence';
 import {protractor, webdriver_update} from 'gulp-protractor';
 import {Instrumenter} from 'isparta';
 
-var plugins = gulpLoadPlugins();
+var plugins = gulpLoadPlugins({pattern: ['gulp-*', 'main-bower-files', 'uglify-save-license', 'del']});
 var config;
 
 const clientPath = require('./bower.json').appPath || 'client';
@@ -471,7 +471,6 @@ gulp.task('build', cb => {
         [
             'build:images',
             'copy:extras',
-            'copy:fonts',
             'copy:assets',
             'copy:server',
             'transpile:server',
@@ -482,10 +481,10 @@ gulp.task('build', cb => {
 
 gulp.task('clean:dist', () => del([`${paths.dist}/!(.git*|.openshift|Procfile)**`], {dot: true}));
 
-gulp.task('build:client', ['transpile:client', 'styles', 'html', 'constant', 'build:images'], () => {
+gulp.task('build:client', ['transpile:client', 'styles', 'html', 'constant', 'build:images', 'other'], () => {
     var manifest = gulp.src(`${paths.dist}/${clientPath}/assets/rev-manifest.json`);
 
-    var appFilter = plugins.filter('**/app.*.js', {restore: true});
+    var appFilter = plugins.filter('**/app.js', {restore: true});
     var jsFilter = plugins.filter('**/*.js', {restore: true});
     var cssFilter = plugins.filter('**/*.css', {restore: true});
     var htmlBlock = plugins.filter(['**/*.!(html)'], {restore: true});
@@ -501,15 +500,38 @@ gulp.task('build:client', ['transpile:client', 'styles', 'html', 'constant', 'bu
                 .pipe(plugins.uglify())
             .pipe(jsFilter.restore)
             .pipe(cssFilter)
+                .pipe(plugins.replace('../../bower_components/material-design-iconfont/iconfont/', '../fonts/'))
                 .pipe(plugins.cleanCss({
                     processImportFrom: ['!fonts.googleapis.com']
                 }))
+                // .pipe(plugins.minifyCss({ processImport: false }))
             .pipe(cssFilter.restore)
             .pipe(htmlBlock)
                 .pipe(plugins.rev())
             .pipe(htmlBlock.restore)
         .pipe(plugins.revReplace({manifest}))
         .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
+});
+
+// Only applies for fonts from bower dependencies
+// Custom fonts are handled by the "other" task
+// gulp.task('fonts', function () {
+//   return gulp.src(plugins.mainBowerFiles().concat('bower_components/material-design-iconfont/iconfont/*'))
+//     .pipe(plugins.filter('**/*.{eot,svg,ttf,woff,woff2}'))
+//     .pipe(plugins.flatten())
+//     .pipe(gulp.dest(`${paths.dist}/${clientPath}/fonts/`));
+// });
+
+gulp.task('other', function () {
+  var fileFilter = plugins.filter(function (file) {
+    return file.stat.isFile();
+  });
+
+  return gulp.src([
+    `${clientPath}/{app,components}/**/*.json`
+  ])
+    .pipe(fileFilter)
+    .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
 });
 
 gulp.task('html', function() {
@@ -560,10 +582,10 @@ gulp.task('copy:extras', () => {
         .pipe(gulp.dest(`${paths.dist}/${clientPath}`));
 });
 
-gulp.task('copy:fonts', () => {
-    return gulp.src(`${clientPath}/bower_components/font-awesome/fonts/**/*`, { dot: true })
-        .pipe(gulp.dest(`${paths.dist}/${clientPath}/bower_components`));
-});
+// gulp.task('copy:fonts', () => {
+//     return gulp.src(`${clientPath}/bower_components/material-design-iconfont/iconfont/**/*`, { dot: true })
+//         .pipe(gulp.dest(`${paths.dist}/${clientPath}/fonts`));
+// });
 
 gulp.task('copy:assets', () => {
     return gulp.src([paths.client.assets, '!' + paths.client.images])
