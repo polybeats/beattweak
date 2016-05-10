@@ -1,0 +1,19 @@
+<bt-row ng-repeat="channel in dm.channels()" channel="channel" channel-index="$index" start-beat="dm.startBeat" stop-beat="dm.stopBeat" num-cols="dm.gridLength()"  class="channel" flex="10">
+</bt-row>
+<div class="control-row" layout="row" layout-align="start center">
+  <div flex-offset="5" flex="10">
+    <md-button ng-click="togglePlay()" aria-label="Toggle Play">
+      <md-icon class="material-icons md-light md-48" ng-hide="dm.playing()">play_circle_outline</md-icon>
+      <md-icon class="material-icons md-light md-48" ng-show="dm.playing()">pause_circle_outline</md-icon>
+    </md-button>
+  </div>
+  <div flex="10">
+    <md-button ng-disabled="dm.playing()" ng-click="dm.reset()" aria-label="clear">
+      Clear
+    </md-button>
+  </div>
+  <div flex="25" ng-cloak>
+    <h4 class="bpm-text">{{bpm}} bpm</h4>
+    <md-slider ng-change="updateTempo()" ng-model="bpm" min="40" max="200" aria-label="bpm adjustment" ng-disabled="playing"></md-slider>
+  </div>
+</div>

@@ -1,41 +1,37 @@
-'use strict';
+(function() {
+  'use strict';
 
-describe('Component: mainComponent', function() {
+  describe('controllers', function(){
+    var vm;
+    
+    beforeEach(module('beatTweak'));
+    beforeEach(inject(function(_$controller_, _channel_) {
+      spyOn(_channel_, 'getChannels').and.returnValue([{}, {}, {}, {}, {}]);
+      // spyOn(_toastr_, 'info').and.callThrough();
 
-  // load the controller's module
-  beforeEach(module('beattweakApp'));
-  beforeEach(module('stateMock'));
-  beforeEach(module('socketMock'));
+      vm = _$controller_('MainController');
+/*      $timeout = _$timeout_;
+      toastr = _toastr_;*/
+    }));
 
-  var scope;
-  var mainComponent;
-  var state;
-  var $httpBackend;
+    it('should have a timestamp creation date', function() {
+      expect(vm.creationDate).toEqual(jasmine.any(Number));
+    });
 
-  // Initialize the controller and a mock scope
-  beforeEach(inject(function(
-    _$httpBackend_,
-    $http,
-    $componentController,
-    $rootScope,
-    $state,
-    socket) {
-      $httpBackend = _$httpBackend_;
-      $httpBackend.expectGET('/api/things')
-        .respond(['HTML5 Boilerplate', 'AngularJS', 'Karma', 'Express']);
+/*    it('should define animate class after delaying timeout ', function() {
+      $timeout.flush();
+      expect(vm.classAnimation).toEqual('rubberBand');
+    });
 
-      scope = $rootScope.$new();
-      state = $state;
-      mainComponent = $componentController('main', {
-        $http: $http,
-        $scope: scope,
-        socket: socket
-      });
-  }));
+    it('should show a Toastr info and stop animation when invoke showToastr()', function() {
+      vm.showToastr();
+      expect(toastr.info).toHaveBeenCalled();
+      expect(vm.classAnimation).toEqual('');
+    });*/
 
-  it('should attach a list of things to the controller', function() {
-    mainComponent.$onInit();
-    $httpBackend.flush();
-    expect(mainComponent.awesomeThings.length).toBe(4);
+    it('should define more than 1 channel', function() {
+      expect(angular.isArray(vm.channels)).toBeTruthy();
+      expect(vm.channels.length > 1).toBeTruthy();
+    });
   });
-});
+})();

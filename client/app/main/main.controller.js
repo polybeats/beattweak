@@ -1,42 +1,49 @@
-'use strict';
-
 (function() {
+  'use strict';
 
-class MainController {
+  angular
+    .module('beattweakApp')
+    .controller('MainController', MainController);
 
-  constructor($http, $scope, socket) {
-    this.$http = $http;
-    this.socket = socket;
-    this.awesomeThings = [];
+  function MainController($scope, $rootScope, drumMachine) {
+    var vm = this;
+    var rs = $rootScope;
+    var dm = drumMachine;
+        
+    rs.loading = true;
 
-    $scope.$on('$destroy', function() {
-      socket.unsyncUpdates('thing');
-    });
+    // begin old stuff
+    vm.creationDate = new Date();
+    
+    drumMachine.loadInstruments()
+      .then(function () {
+        rs.loading = false;
+        rs.dm = dm;
+        rs.bpm = dm.tempo();
+      });
+
   }
 
-  $onInit() {
-    this.$http.get('/api/things').then(response => {
-      this.awesomeThings = response.data;
-      this.socket.syncUpdates('thing', this.awesomeThings);
-    });
+
+  function SecureController($scope, $rootScope, drumMachine) {
+    var vm = this;
+    var rs = $rootScope;
+    var dm = drumMachine;
+        
+    rs.loading = true;
+
+    // begin old stuff
+    vm.creationDate = new Date();
+    
+    drumMachine.loadInstruments()
+      .then(function () {
+        rs.loading = false;
+        rs.dm = dm;
+        rs.bpm = dm.tempo();
+      });
+
   }
 
-  addThing() {
-    if (this.newThing) {
-      this.$http.post('/api/things', { name: this.newThing });
-      this.newThing = '';
-    }
-  }
-
-  deleteThing(thing) {
-    this.$http.delete('/api/things/' + thing._id);
-  }
-}
-
-angular.module('beattweakApp')
-  .component('main', {
-    templateUrl: 'app/main/main.html',
-    controller: MainController
-  });
-
+  MainController.$inject = ['$scope', '$rootScope', 'drumMachine'];
+  SecureController.$inject = MainController.$inject;
 })();

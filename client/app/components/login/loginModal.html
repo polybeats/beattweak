@@ -1,0 +1,13 @@
+<md-dialog aria-label="List dialog">
+  <md-dialog-content>
+  <form ng-submit="LoginModalCtrl.submit(_email, _password)">
+    <input type="email" ng-model="_email" />
+    <input type="password" ng-model="_password" />
+    <button>Submit</button>
+  </form>
+  <!-- <button ng-click="LoginModalCtrl.cancel()">Cancel</button> -->
+  </md-dialog-content>
+  <md-dialog-actions>
+    <md-button ng-click="LoginModalCtrl.cancel()" class="md-primary">Cancel</md-button>
+  </md-dialog-actions>
+</md-dialog>

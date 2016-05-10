@@ -1,0 +1,14 @@
+{
+  "name": "default",
+  "instruments": [
+    { "name" : "Kick",
+      "file" : "kick.wav" },
+    { "name" : "Snare",
+      "file" : "snare.wav" },
+    { "name" : "Hi-Hat",
+      "description" : "closed",
+      "file" : "hat.wav" },
+    { "name" : "Rimshot",
+      "file" : "rim.wav" }
+  ]
+}

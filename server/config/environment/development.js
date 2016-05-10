@@ -7,7 +7,7 @@ module.exports = {
   // MongoDB connection options
   mongo: {
     uri: 'mongodb://localhost/beattweak-dev'
-  }
+  },
 
   // Seed database on startup
   seedDB: true
