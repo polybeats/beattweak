@@ -10,3 +10,20 @@ before_script:
   - gem install sass
   - bower install
 services: mongodb
+
+env:
+  global:
+    - GH_REF: github.com/vzellweg/beattweak.git
+    - GH_OWNER: vzellweg
+    - GH_PROJECT_NAME: beattweak
+
+install:
+  # Check the size of
+  - caches -sh ./node_modules ./test/tmp/deps/node_modules || true
+  - npm install -g npm@latest
+  # Instal npm dependecies and ensure that npm cache is not stale
+  - rm -rf node_modules 
+  - npm install
+
+after_success:
+  - npm build
