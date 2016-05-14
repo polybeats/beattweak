@@ -1,0 +1,32 @@
+<md-sidenav md-component-id="left" class="md-sidenav-left" layout="column" layout-align="start start">
+    <md-button ng-click="browser.closeLeftMenu()" class="md-icon-button md-no-ink" aria-label="Toggle Room Browser">
+      <md-icon class="md-light">group</md-icon>
+    </md-button>
+    <div class="lists-container layout-padding" flex layout="column" layout-align="start start">
+        <h4>Users</h4>
+        <md-content flex="40">
+            <md-list>
+                <md-list-item ng-repeat="user in users">
+                    <h4>{{ user.name }}</h4>
+                </md-list-item> 
+            </md-list>
+        </md-content>
+        <h4>Actions</h4>
+        <md-content flex="40">
+            <md-list>
+                <md-list-item ng-repeat="action in actions">
+                    <h4>{{ action.user }}</h4>
+                    <h4>{{ action.text }}</h4>
+                </md-list-item> 
+            </md-list>
+        </md-content>
+        <!-- <div>
+            <h4>Change your name</h4>
+            <p>Your current user name is </p>
+            <form ng-submit="changeName()">
+                <input ng-model="newName"/>
+                <input type="submit" value="Change Name" />
+            </form>
+        </div> -->
+    </div>
+</md-sidenav>

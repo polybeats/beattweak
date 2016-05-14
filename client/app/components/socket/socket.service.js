@@ -3,8 +3,8 @@
 (function(){
   angular
   .module('beattweakApp')
-  .factory('socket', function ($rootScope) {
-    var socket = null;// io.connect();
+  .factory('socket-new', function ($rootScope) {
+    var socket = io.connect();
     return {
       on: function (eventName, callback) {
         socket.on(eventName, function () {  

@@ -1,16 +1,12 @@
 <md-toolbar>
-  <div class="bt-navbar" layout="row" layout-align="end center" flex>
-    <div flex="10"><h2>Beat Tweak</h2></div>
+  <div class="bt-navbar" layout="row" layout-align="space-between start " flex>
+    <md-button ng-click="nav.openLeftMenu()" class="md-icon-button md-no-ink" aria-label="Toggle Room Browser">
+      <md-icon class="md-light">group</md-icon>
+    </md-button>
 
-    <section flex="45" layout="row" layout-align="end center">
-      <!-- <md-button href="#" class="md-icon-button" aria-label="settings">
-        <md-icon class="md-light">settings</md-icon>
-      </md-button> -->
-      <md-button href="{{vm.freesound_auth}}" class="md-icon-button" aria-label="settings">
-        <md-icon class="md-light">account_circle</md-icon>
-      </md-button>
-    </section>
+    <div flex><h2>beattweak</h2></div>
 
+    <div></div>
     <!-- <md-button class="acme-navbar-text">Application was created {{ vm.relativeDate }}.</md-button> -->
   </div>
 </md-toolbar>

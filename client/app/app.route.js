@@ -19,12 +19,6 @@
         templateUrl: 'app/components/login/loginModal.html',
         controller: 'LoginModalCtrl',
         controllerAs: 'login'
-      })
-      .state('secure', {
-        url: '/secure',
-        templateUrl: 'app/main/main.html',
-        controller: 'SecureController',
-        controllerAs: 'main'
       });
 
     $urlRouterProvider.otherwise('/');
