@@ -1,23 +1,46 @@
 /**
  * Using Rails-like standard naming convention for endpoints.
- * GET     /api/users              ->  index
- * POST    /api/users              ->  create
- * GET     /api/users/:id          ->  show
- * PUT     /api/users/:id          ->  update
- * DELETE  /api/users/:id          ->  destroy
+ * GET     /api/rooms              ->  index
+ * POST    /api/rooms              ->  create
+ * GET     /api/rooms/:id          ->  show
+ * PUT     /api/rooms/:id          ->  update
+ * DELETE  /api/rooms/:id          ->  destroy
  */
 
 'use strict';
 
 import _ from 'lodash';
-import User from './user.model';
+import Room from './room.model';
+
+function get_default_channels(machine_conf) {
+  var ch_names = ['Kick', 'Snare', 'Hi-hat', 'Rimshot'], channel = {index: 0, beats: []}
+  for(var i = 0; i < machine_conf.grid_length; i++) {
+    channel.beats.push(false);
+  }
+  var default_channels = ch_names.map(function(name, i) {
+    return {name: name, index: i, beats: channel.beats};
+  })
+  return default_channels;
+}
+
+function handleNoChannels(res) {
+  return function(entity) {
+    if (!entity.channels || !entity.channels.length) {
+      entity.channels = get_default_channels(entity);
+    }
+    return entity;
+  };
+}
+
 
 function respondWithResult(res, statusCode) {
   statusCode = statusCode || 200;
   return function(entity) {
     if (entity) {
       res.status(statusCode).json(entity);
+      return entity;
     }
+    return null;
   };
 }
 
@@ -37,6 +60,7 @@ function removeEntity(res) {
       return entity.remove()
         .then(() => {
           res.status(204).end();
+          return null;
         });
     }
   };
@@ -59,43 +83,44 @@ function handleError(res, statusCode) {
   };
 }
 
-// Gets a list of Users
+// Gets a list of Rooms
 export function index(req, res) {
-  return User.find().exec()
+  return Room.find().exec()
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Gets a single User from the DB
+// Gets a single Room from the DB
 export function show(req, res) {
-  return User.findById(req.params.id).exec()
+  return Room.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Creates a new User in the DB
+// Creates a new Room in the DB
 export function create(req, res) {
-  return User.create(req.body)
+  return Room.create(req.body)
+    .then(handleNoChannels(res))
     .then(respondWithResult(res, 201))
     .catch(handleError(res));
 }
 
-// Updates an existing User in the DB
+// Updates an existing Room in the DB
 export function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return User.findById(req.params.id).exec()
+  return Room.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(saveUpdates(req.body))
     .then(respondWithResult(res))
     .catch(handleError(res));
 }
 
-// Deletes a User from the DB
+// Deletes a Room from the DB
 export function destroy(req, res) {
-  return User.findById(req.params.id).exec()
+  return Room.findById(req.params.id).exec()
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
     .catch(handleError(res));

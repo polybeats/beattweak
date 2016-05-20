@@ -3,7 +3,8 @@
 
   class MainController {
 
-    constructor($scope, $http, $rootScope, drumMachine, socket) {
+    
+    constructor($scope, $http, $rootScope, drumMachine, socket, Rooms, $log) {
       var rs = $rootScope;
       var dm = drumMachine;
       var vm = this;
@@ -11,129 +12,101 @@
       rs.loading = true;
       vm.$http = $http;
       vm.socket = socket;
-      vm.users = [];
-      vm.actions = [];
+
+      rs.dm = dm;
+
+      $scope.deleteRoom = function(room_idx) {
+        var room = vm.rooms[room_idx];
+        var rm = Rooms.remove({roomId:room._id}, function() {
+          // success
+            $log.debug('Room delete success');
+            vm.rooms.splice(room_idx, 1);
+          
+        }, function(err) {
+          // error
+          $log.error('Room delete error: ' + angular.toJson(err));
+        });
+      };
+
+      $scope.selectRoom = function(room) {
+        console.log('selecting room: ' + angular.toJson(room));
+        // TODO: stop/erase current dm
+        rs.loading = true;
+        dm.loadMachine(room);
+        dm.loadInstruments();
+        rs.bpm = dm.tempo();
+        rs.loading = false;
+        // $scope.$apply()
+        // TODO: update rest of displays - apply?
+      };
+
+      $scope.createRoom = function(newName) {
+        var room = new Rooms();
+
+        room.name = newName ? newName : 'New Room';
+
+        room.$save().then(response => {
+          $log.debug('Post response' + angular.toJson(response));
+
+          dm.loadMachine(response);
+          dm.loadInstruments();  
+        })
+        
+      };
+
+
       // begin old stuff
       vm.creationDate = new Date();
       
-      drumMachine.loadInstruments()
+      /* Move to init
+        drumMachine.loadInstruments()
         .then(function () {
           rs.loading = false;
           rs.dm = dm;
           rs.bpm = dm.tempo();
-        });
+        });*/
       $scope.$on('$destroy', function() {
         socket.unsyncUpdates('thing');
-        socket.unsyncUpdates('user');
+        socket.unsyncUpdates('room');
       });
+
+      vm.rooms = Rooms.query(function() {
+
+          vm.socket.syncUpdates('room', vm.rooms);
+          if (vm.rooms.length) { 
+            console.log('loading drum config: ' + angular.toJson(vm.rooms[0]))
+            drumMachine.loadMachine(vm.rooms[0]);
+            drumMachine.loadInstruments()
+              .then(function () {
+                rs.loading = false;
+                rs.dm = dm;
+                rs.bpm = dm.tempo();
+              });
+          }
+        });
     }
       // Socket listeners
       // ================
       $onInit() {
-        this.$http.get('/api/things').then(response => {
-          this.actions = response.data;
-          this.socket.syncUpdates('thing', this.actions);
-        });
-        this.$http.get('/api/users').then(response => {
-          this.users = response.data;
-          this.socket.syncUpdates('user', this.users);
-        });
-      }
+        $log.debug('main init!')
+        // this.$http.get('/api/rooms')
+        Rooms.query().then(response => {
+          this.rooms = response;
 
-      // These methods for controller, not manually adding users or actions right now
-      /*addAction() {
-        if (this.newAction) {
-          this.$http.post('/api/actions', { name: this.newAction });
-          this.newAction = '';
-        }
-      }
-
-      deleteThing(action) {
-        this.$http.delete('/api/actions/' + action._id);
-      }*/
-
-     /* socket.on('init', function (data) {
-        $scope.name = data.name;
-        $scope.users = data.users;
-      });
-
-      socket.on('send:message', function (message) {
-        $scope.actions.push(message);
-      });
-
-      socket.on('change:name', function (data) {
-        changeName(data.oldName, data.newName);
-      }); 
-
-      socket.on('user:join', function (data) {
-        this.actions.push({
-          user: 'chatroom',
-          text: 'User ' + data.name + ' has joined.'
-        });
-        this.users.push(data.name);
-      }); */
-
-      // add a message to the conversation when a user disconnects or leaves the room
-/*      socket.on('user:left', function (data) {
-        this.actions.push({
-          user: 'chatroom',
-          text: 'User ' + data.name + ' has left.'
-        });
-
-      });*/
-
-      // Private helpers
-      // ===============
-
-     /* var changeName = function (oldName, newName) {
-        // rename user in list of users
-        var i;
-        for (i = 0; i < $scope.users.length; i++) {
-          if (this.users[i] === oldName) {
-            this.users[i] = newName;
-          }
-        }
-
-        this.actions.push({
-          user: 'chatroom',
-          text: 'User ' + oldName + ' is now known as ' + newName + '.'
-        });
-      }*/
-
-      // Methods published to the scope
-      // ==============================
-
-      /*$scope.changeName = function () {
-        socket.emit('change:name', {
-          name: $scope.newName
-        }, function (result) {
-          if (!result) {
-            alert('There was an error changing your name');
-          } else {
-
-            changeName($scope.name, $scope.newName);
-
-            $scope.name = $scope.newName;
-            $scope.newName = '';
+          this.socket.syncUpdates('room', this.rooms);
+          if (this.rooms.length) { 
+            console.log('loading drum config: ' + angular.toJson(this.rooms[0]))
+            drumMachine.loadMachine(this.rooms[0]);
+            drumMachine.loadInstruments()
+              .then(function () {
+                rs.loading = false;
+                rs.dm = dm;
+                rs.bpm = dm.tempo();
+              });
           }
         });
-      };
 
-      $scope.sendMessage = function () {
-        socket.emit('send:message', {
-          message: $scope.message
-        });
-
-        // add the message to our model locally
-        vm.actions.push({
-          user: $scope.name,
-          text: $scope.message
-        });
-
-        // clear message box
-        $scope.message = '';
-      }; 
-      */
+      }
 
     }
 angular

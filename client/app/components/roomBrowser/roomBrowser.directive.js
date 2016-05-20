@@ -16,8 +16,10 @@ angular.module('beattweakApp')
       templateUrl: 'app/components/roomBrowser/roomBrowser.html',
       restrict: 'E',
       scope: {
-        users: '=',
-        actions: '='
+        rooms: '=',
+        createRoom: '=',
+        selectRoom: '=',
+        deleteRoom: '='
       },
       link: function (scope, element, attrs) {
       },

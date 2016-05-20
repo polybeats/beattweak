@@ -1,12 +1,33 @@
 (function() {
   'use strict';
+  var mac_mock = {
+    name: 'New Room',
+    tempo: 140,
+    bar_resolution: 8,
+    grid_length: 16,
+    channels: [
+      
+    ]
+  };
+var ch_names = ['Kick', 'Snare', 'Hi-hat', 'Rimshot'], channel = {index: 0, beats: []}
+for(var i = 0; i < mac_mock.grid_length; i++) {
+  channel.beats.push(false);
+}
+mac_mock.channels = ch_names.map(function(name, i) {
+  return {name: name, index: i, beats: channel.beats};
+})
+
 
   describe('service channel', function() {
-    var channel;
+    var channel, dm;
 
     beforeEach(module('beattweakApp'));
-    beforeEach(inject(function(_channel_) {
+    // run machine config
+    beforeEach(inject(function(_channel_, _drumMachine_) {
       channel = _channel_;
+      dm = _drumMachine_;
+      dm.loadMachine(mac_mock);
+      dm.loadInstruments();
     }));
 
     it('should be registered', function() {

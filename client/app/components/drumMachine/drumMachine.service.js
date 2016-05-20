@@ -2,7 +2,7 @@
   'use strict';
 angular
 .module('beattweakApp')
-.factory('drumMachine', ['$http', '$q', 'channel', '$window', '$rootScope', '$log', function($http, $q, channel, $window, $rootScope, $log) {
+.factory('drumMachine', ['$http', '$q', 'channel', '$window', '$rootScope', '$log', 'socket', function($http, $q, channel, $window, $rootScope, $log, socket) {
   // Private variables
   if (!$window.AudioContext) {alert('you browser doesnt support Web Audio API')}
 
@@ -14,7 +14,7 @@ angular
     , barDur = signature * beatDur
     , clock, context, rhythmIndex,
     playing, uiEvent;
-  var rows = [];
+  var channels, rows = [];
   // var events = eventQueue;
 
 /*  
@@ -22,8 +22,21 @@ angular
     http://sebpiq.github.io/WAAClock/demos/beatSequence.html
 */
 
+  // Load w/ settings 
+  function loadMachine(machine) {
+    stop();
+    rows = [];
+    tempo = machine.tempo;
+    signature = machine.signature;
+    barRes = machine.bar_resolution;
+    gridLength = machine.grid_length;
+    channels = machine.channels;
+
+  }
+
   function loadInstruments() {
-    return channel.loadInstruments(gridLength, context).then(function()
+    var channel_conf = {gridLength: gridLength, channels: channels}
+    return channel.loadInstruments(channel_conf, context).then(function()
       {
         rows = channel.getChannels();
         $log.debug('rows: ' + JSON.stringify(rows))
@@ -97,7 +110,7 @@ angular
     rhythmIndex = -1;
     clock = new WAAClock(context, {toleranceEarly: 0.1});
     playing = true;
-    $log.debug('play started')
+    $log.debug('play started');
     clock.start();
 
     // Schedule all enabled beats
@@ -115,6 +128,7 @@ angular
     .tolerance({ early: 0.1, late: 1 })
   }
   function stop() {
+    if (!playing) {return;}
     playing = false;
     // events.clear();
     uiEvent.clear();
@@ -149,6 +163,7 @@ angular
 
   // Return public functions
   return {
+    loadMachine: loadMachine,
     loadInstruments: loadInstruments,
     // loadSequence: loadSequence,
     gridLength: getGridLength,

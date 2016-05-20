@@ -21,7 +21,7 @@
     return directive;
 
     /** @ngInject */
-    function dmController($scope, $rootScope, drumMachine, $log) {
+    function dmController($scope, $rootScope, drumMachine, $log, socket) {
       var _s = $scope;
       var _dm = drumMachine;
 
@@ -35,8 +35,11 @@
         if (_dm.playing()) {
           $log.debug('stop clock')
           _dm.stop();
+
+          socket.emit('room:stop');
         } else {
           $log.debug('start clock')
+          socket.emit('room:play');
           _dm.play();
           _s.rhythmIndex = _dm.rhythmIndex;
           // toggleCol(s.currentBeat);

@@ -16,6 +16,7 @@ describe('Directive: roomBrowser', function () {
     element = angular.element('<room-browser></room-browser>');
     element = $compile(element)(scope);
     scope.$apply();
-    expect(element.text()).toBe('this is the roomBrowser directive');
+    expect(angular.isArray(scope.rooms)).toBeTruthy();
+    expect(scope.rooms.length > 0).toBeTruthy();
   }));
 });

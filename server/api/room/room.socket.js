@@ -4,18 +4,18 @@
 
 'use strict';
 
-import UserEvents from './user.events';
+import RoomEvents from './room.events';
 
 // Model events to emit
-var events = ['save', 'remove'];
+var events = ['save', 'update', 'beatChange','play', 'stop', 'remove'];
 
 export function register(socket) {
   // Bind model events to socket events
   for (var i = 0, eventsLength = events.length; i < eventsLength; i++) {
     var event = events[i];
-    var listener = createListener('user:' + event, socket);
+    var listener = createListener('room:' + event, socket);
 
-    UserEvents.on(event, listener);
+    RoomEvents.on(event, listener);
     socket.on('disconnect', removeListener(event, listener));
   }
 }
@@ -29,6 +29,6 @@ function createListener(event, socket) {
 
 function removeListener(event, listener) {
   return function() {
-    UserEvents.removeListener(event, listener);
+    RoomEvents.removeListener(event, listener);
   };
 }

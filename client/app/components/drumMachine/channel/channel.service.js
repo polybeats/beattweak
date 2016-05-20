@@ -36,10 +36,21 @@
         
       }
 
-      this.loadInstruments = function(gridLength, context, instrumentFile) {
-        var item;
-        var file = instrumentFile || "/app/components/drumMachine/defaults/local-kit.json";
 
+      this.updateBeats = function beatUpdate(channels) {
+        channels.forEach(function(ch) {
+          ch.beats.forEach(function(beat, i) {
+            data[ch.index].sequence[i].active = beat;
+          })
+        });
+      }
+
+      this.loadInstruments = function(machine, context, instrumentFile) {
+        var item, beatUpdate = this.updateBeats;
+        var file = instrumentFile || "/app/components/drumMachine/defaults/local-kit.json";
+        data = [];
+        this.channels = machine.channels;
+        
         return $http.get(file).then(function(response) {
           var clearBeats = function(){this.sequence.forEach(function(b){b.active = false;})};
           for(var i = 0; i < 4; i++) {
@@ -54,7 +65,7 @@
             var clearBeat = function(){this.active = false;};
             var togglePlay = function(){this.playing = !this.playing;};
             var stopPlay = function(){this.playing = false;};
-            for(var j = 0; j < gridLength; j++) {
+            for(var j = 0; j < machine.gridLength; j++) {
               // Add beats
               row.sequence.push({"active": false, "toggle": toggleBeat, 
                 "clear": clearBeat, "playing": false,
@@ -68,6 +79,7 @@
             loadTrack(item.file, i, context);
                
           }
+          beatUpdate(machine.channels);
           return "Instruments Loaded";
         });
       }

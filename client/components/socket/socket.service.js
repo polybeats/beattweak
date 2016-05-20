@@ -15,6 +15,10 @@ angular.module('beattweakApp')
     return {
       socket,
 
+      emit(message, data) {
+        socket.emit(message, data);
+      },
+
       /**
        * Register listeners to sync an array with updates on a model
        *
