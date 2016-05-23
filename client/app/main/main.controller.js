@@ -46,10 +46,10 @@
         room.name = newName ? newName : 'New Room';
 
         room.$save().then(response => {
-          $log.debug('Post response' + angular.toJson(response));
-
-          dm.loadMachine(response);
-          dm.loadInstruments();  
+          // $log.debug('Post response' + angular.toJson(response));
+          $scope.selectRoom(response)
+          // dm.loadMachine(response);
+          // dm.loadInstruments();  
         })
         
       };
