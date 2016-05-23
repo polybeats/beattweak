@@ -81,6 +81,7 @@
                 rs.loading = false;
                 rs.dm = dm;
                 rs.bpm = dm.tempo();
+                socket.socket.emit('info', {room: 0, username: 'test user'});
               });
           }
         });

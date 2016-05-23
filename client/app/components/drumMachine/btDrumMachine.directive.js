@@ -25,8 +25,21 @@
       var _s = $scope;
       var _dm = drumMachine;
 
-      socket.socket.on('room:play', _dm.play());
-      socket.socket.on('room:pause', _dm.stop());
+
+
+      socket.socket.on('room:play', function(data){
+          $log.debug('playing from socket event')
+        if (!_dm.playing()){
+          _dm.play();
+          _s.rhythmIndex = _dm.rhythmIndex;
+          _s.playing = true;
+        }});
+      socket.socket.on('room:pause', function(data){
+        $log.debug('pausing from socket event')
+        if (_dm.playing()){
+          _dm.stop();
+          _s.playing = false;
+        }});
 
       // Update the tempo
       _s.updateTempo = function() {

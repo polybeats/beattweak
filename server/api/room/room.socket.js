@@ -7,7 +7,7 @@
 import RoomEvents from './room.events';
 
 // Model events to emit
-var events = ['save', 'update', 'beatChange','play', 'stop', 'remove'];
+var events = ['save', 'update', 'beatChange','play', 'pause', 'remove'];
 
 export function register(socket) {
   // Bind model events to socket events
@@ -23,6 +23,7 @@ export function register(socket) {
 
 function createListener(event, socket) {
   return function(doc) {
+    consoel.log('emitting room event: ' + event)
     socket.emit(event, doc);
   };
 }

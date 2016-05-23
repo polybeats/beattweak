@@ -54,6 +54,19 @@ export default function(socketio) {
       socket.log('DISCONNECTED');
     });
 
+    // Call room:play.
+    socket.on('room:play', response => {
+      // onDisconnect(socket);
+      socket.log('STARTED PLAYING');
+      socket.broadcast.emit('room:play');
+    });
+
+    // Call room:pause.
+    socket.on('room:pause', response => {
+      // onDisconnect(socket);
+      socket.log('PAUSED PLAYING');
+      socket.broadcast.emit('room:pause');
+    });
     // Call onConnect.
     onConnect(socket);
     socket.log('CONNECTED');
