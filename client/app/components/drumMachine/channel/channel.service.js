@@ -6,10 +6,27 @@
       .service('channel', channel);
     function channel($http, $log) {
       var data = [];
+      var socket;
 
-      
+      this.setSocket = function(soc) {
+        socket = soc;
+      }
+
       this.getChannels = function () {
         return data;
+      }
+
+      function channelConf() {
+        return data.map(function(channel, i){
+          return {index: i, 
+            beats: channel.sequence.map(function(beat) {
+              return beat.active;
+            })} 
+        })
+      }
+
+      function updateNotify() {
+        socket.socket.emit('room:beatUpdate', channelConf());
       }
 
       // This helper loads sound buffers
@@ -61,7 +78,8 @@
               'sound': null,
               'sequence': []
             };
-            var toggleBeat = function(){this.active = !this.active;};
+            var toggleBeat = function(){this.active = !this.active;
+              updateNotify();};
             var clearBeat = function(){this.active = false;};
             var togglePlay = function(){this.playing = !this.playing;};
             var stopPlay = function(){this.playing = false;};

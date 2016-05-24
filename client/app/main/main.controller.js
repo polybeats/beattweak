@@ -32,7 +32,7 @@
         console.log('selecting room: ' + angular.toJson(room));
         // TODO: stop/erase current dm
         rs.loading = true;
-        dm.loadMachine(room);
+        dm.loadMachine(room, vm.socket);
         dm.loadInstruments();
         rs.bpm = dm.tempo();
         rs.loading = false;
@@ -75,7 +75,7 @@
           vm.socket.syncUpdates('room', vm.rooms);
           if (vm.rooms.length) { 
             console.log('loading drum config: ' + angular.toJson(vm.rooms[0]))
-            drumMachine.loadMachine(vm.rooms[0]);
+            drumMachine.loadMachine(vm.rooms[0], vm.socket);
             drumMachine.loadInstruments()
               .then(function () {
                 rs.loading = false;

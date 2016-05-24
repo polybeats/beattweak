@@ -23,7 +23,7 @@ angular
 */
 
   // Load w/ settings 
-  function loadMachine(machine) {
+  function loadMachine(machine, socket) {
     stop();
     rows = [];
     tempo = machine.tempo;
@@ -31,7 +31,11 @@ angular
     barRes = machine.bar_resolution;
     gridLength = machine.grid_length;
     channels = machine.channels;
+    channel.setSocket(socket);
+  }
 
+  function updateBeats(channels){
+    channel.updateBeats(channels);
   }
 
   function loadInstruments() {
@@ -165,7 +169,7 @@ angular
   return {
     loadMachine: loadMachine,
     loadInstruments: loadInstruments,
-    // loadSequence: loadSequence,
+    updateBeats: updateBeats,
     gridLength: getGridLength,
     // currentBeat: currentBeat,
     channels: getRows,

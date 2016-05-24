@@ -41,6 +41,11 @@
           _s.playing = false;
         }});
 
+      socket.socket.on('room:beatUpdate', function(data){
+        $log.debug('update beats from socket event, channel: ' + angular.toJson(data))
+        _dm.updateBeats(data);
+      });      
+
       // Update the tempo
       _s.updateTempo = function() {
         _s.dm.setTempo(_s.bpm);
