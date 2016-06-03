@@ -6,6 +6,7 @@
       .service('channel', channel);
     function channel($http, $log) {
       var data = [];
+      var machine_id;
       var socket;
 
       this.setSocket = function(soc) {
@@ -17,12 +18,16 @@
       }
 
       function channelConf() {
-        return data.map(function(channel, i){
+        var chans = data.map(function(channel, i){
           return {index: i, 
             beats: channel.sequence.map(function(beat) {
               return beat.active;
             })} 
-        })
+        });
+        var retval = {channels: chans};
+        retval['_id'] = machine_id;
+        // TODO: get machine_id from this...
+        return retval;
       }
 
       function updateNotify() {
@@ -54,7 +59,9 @@
       }
 
 
-      this.updateBeats = function beatUpdate(channels) {
+      this.updateBeats = function beatUpdate(machine) {
+        $log.debug('updateBeats, machine_conf: ' + angular.toJson(machine))
+        var channels = machine.channels;
         channels.forEach(function(ch) {
           ch.beats.forEach(function(beat, i) {
             data[ch.index].sequence[i].active = beat;
@@ -67,6 +74,7 @@
         var file = instrumentFile || "/app/components/drumMachine/defaults/local-kit.json";
         data = [];
         this.channels = machine.channels;
+        machine_id = machine['_id'];
         
         return $http.get(file).then(function(response) {
           var clearBeats = function(){this.sequence.forEach(function(b){b.active = false;})};
@@ -97,7 +105,7 @@
             loadTrack(item.file, i, context);
                
           }
-          beatUpdate(machine.channels);
+          beatUpdate(machine);
           return "Instruments Loaded";
         });
       }

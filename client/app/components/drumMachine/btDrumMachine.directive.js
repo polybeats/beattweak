@@ -25,26 +25,44 @@
       var _s = $scope;
       var _dm = drumMachine;
 
-
-
-      socket.socket.on('room:play', function(data){
+      function roomCheck(cb) {
+        return function (data) {
+          if (_dm.getMachineId() === data['_id']) {
+            $log.debug('match found for current machine_id: ' + _dm.getMachineId() +
+            ' and socket machine conf: ' + angular.toJson(data));
+            cb(data)
+          } else {
+            $log.debug('no mactch for current machine_id: ' + _dm.getMachineId() +
+            ' and socket machine conf: ' + angular.toJson(data));
+          } 
+        }
+      }
+      function playListener(data){
           $log.debug('playing from socket event')
         if (!_dm.playing()){
           _dm.play();
           _s.rhythmIndex = _dm.rhythmIndex;
           _s.playing = true;
-        }});
-      socket.socket.on('room:pause', function(data){
+        }
+      }
+      function pauseListener(data){
         $log.debug('pausing from socket event')
         if (_dm.playing()){
           _dm.stop();
           _s.playing = false;
-        }});
+        }
+      }
 
-      socket.socket.on('room:beatUpdate', function(data){
-        $log.debug('update beats from socket event, channel: ' + angular.toJson(data))
+      function beatListener(data){
+        $log.debug('update beats from socket event');
         _dm.updateBeats(data);
-      });      
+      }
+
+
+      socket.socket.on('room:play', roomCheck(playListener));
+      socket.socket.on('room:pause', roomCheck(pauseListener));
+
+      socket.socket.on('room:beatUpdate', roomCheck(beatListener));      
 
       // Update the tempo
       _s.updateTempo = function() {
@@ -56,10 +74,10 @@
           $log.debug('stop clock')
           _dm.stop();
 
-          socket.socket.emit('room:pause');
+          socket.socket.emit('room:pause', {_id: _dm.getMachineId()});
         } else {
           $log.debug('start clock')
-          socket.socket.emit('room:play');
+          socket.socket.emit('room:play', {_id: _dm.getMachineId()});
           _dm.play();
           _s.rhythmIndex = _dm.rhythmIndex;
           // toggleCol(s.currentBeat);

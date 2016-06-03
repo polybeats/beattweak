@@ -1,6 +1,7 @@
 (function() {
   'use strict';
   var mac_mock = {
+    _id: 0,
     name: 'New Room',
     tempo: 140,
     bar_resolution: 8,

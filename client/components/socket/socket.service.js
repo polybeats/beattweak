@@ -2,7 +2,7 @@
 'use strict';
 
 angular.module('beattweakApp')
-  .factory('socket', function(socketFactory) {
+  .factory('socket', function(socketFactory, $log) {
     // socket.io now auto-configures its connection when we ommit a connection url
     var ioSocket = io('', {
       // Send auth token on connection, you will need to DI the Auth service above
@@ -27,15 +27,12 @@ angular.module('beattweakApp')
        */
       syncUpdates(modelName, array, cb) {
         cb = cb || angular.noop;
-
-        /**
-         * Syncs item creation/updates on 'model:save'
-         */
-        socket.on(modelName + ':save', function (item) {
+        function updateModel(item) {
           var oldItem = _.find(array, {_id: item._id});
           var index = array.indexOf(oldItem);
           var event = 'created';
 
+          $log.debug('in updateModel for syncUpdates');
           // replace oldItem if it exists
           // otherwise just add item to the collection
           if (oldItem) {
@@ -46,7 +43,17 @@ angular.module('beattweakApp')
           }
 
           cb(event, item, array);
-        });
+        }
+        /**
+         * Syncs item creation/updates on 'model:save'
+         */
+        socket.on(modelName + ':save',updateModel);
+
+        /**
+         * Syncs item creation/updates on 'model:update'
+         */
+         // TODO: not sure if we need this since user already updated appropriately
+        // socket.on(modelName + ':update',updateModel);
 
         /**
          * Syncs removed items on 'model:remove'

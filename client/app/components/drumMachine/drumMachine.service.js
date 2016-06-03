@@ -13,6 +13,7 @@ angular
     , beatDur = 60/tempo
     , barDur = signature * beatDur
     , clock, context, rhythmIndex,
+    machine_id,
     playing, uiEvent;
   var channels, rows = [];
   // var events = eventQueue;
@@ -25,7 +26,9 @@ angular
   // Load w/ settings 
   function loadMachine(machine, socket) {
     stop();
+    $log.debug('loadMachine, conf: ' + angular.toJson(machine));
     rows = [];
+    machine_id = machine['_id'];
     tempo = machine.tempo;
     signature = machine.signature;
     barRes = machine.bar_resolution;
@@ -34,12 +37,17 @@ angular
     channel.setSocket(socket);
   }
 
+  function getMachineId() {
+    return machine_id;
+  }
+
   function updateBeats(channels){
     channel.updateBeats(channels);
   }
 
   function loadInstruments() {
     var channel_conf = {gridLength: gridLength, channels: channels}
+    channel_conf['_id'] = machine_id;
     return channel.loadInstruments(channel_conf, context).then(function()
       {
         rows = channel.getChannels();
@@ -171,6 +179,7 @@ angular
     loadInstruments: loadInstruments,
     updateBeats: updateBeats,
     gridLength: getGridLength,
+    getMachineId: getMachineId,
     // currentBeat: currentBeat,
     channels: getRows,
     tempo: getTempo,

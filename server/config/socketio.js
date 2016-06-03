@@ -58,14 +58,14 @@ export default function(socketio) {
     socket.on('room:play', response => {
       // onDisconnect(socket);
       socket.log('STARTED PLAYING');
-      socket.broadcast.emit('room:play');
+      socket.broadcast.emit('room:play', response);
     });
 
     // Call room:pause.
     socket.on('room:pause', response => {
       // onDisconnect(socket);
       socket.log('PAUSED PLAYING');
-      socket.broadcast.emit('room:pause');
+      socket.broadcast.emit('room:pause', response);
     });
 
     // Call room:beatUpdate.

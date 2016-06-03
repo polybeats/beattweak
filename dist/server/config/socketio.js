@@ -48,6 +48,34 @@ exports.default = function (socketio) {
       socket.log('DISCONNECTED');
     });
 
+    // Call room:play.
+    socket.on('room:play', function (response) {
+      // onDisconnect(socket);
+      socket.log('STARTED PLAYING');
+      socket.broadcast.emit('room:play');
+    });
+
+    // Call room:pause.
+    socket.on('room:pause', function (response) {
+      // onDisconnect(socket);
+      socket.log('PAUSED PLAYING');
+      socket.broadcast.emit('room:pause');
+    });
+
+    // Call room:beatUpdate.
+    socket.on('room:beatUpdate', function (response) {
+      // onDisconnect(socket);
+      socket.log('UPDATED BEATS');
+      socket.broadcast.emit('room:beatUpdate', response);
+    });
+
+    // Call room:update.
+    socket.on('room:update', function (response) {
+      // onDisconnect(socket);
+      socket.log('UPDATED ROOM');
+      socket.broadcast.emit('room:udpate', response);
+    });
+
     // Call onConnect.
     onConnect(socket);
     socket.log('CONNECTED');

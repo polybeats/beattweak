@@ -17,7 +17,7 @@
 
       $scope.deleteRoom = function(room_idx) {
         var room = vm.rooms[room_idx];
-        var rm = Rooms.remove({roomId:room._id}, function() {
+        var rm = Rooms.remove({roomId:room['_id']}, function() {
           // success
             $log.debug('Room delete success');
             vm.rooms.splice(room_idx, 1);
@@ -29,7 +29,9 @@
       };
 
       $scope.selectRoom = function(room) {
-        console.log('selecting room: ' + angular.toJson(room));
+        room = angular.fromJson(room);
+        room.machine_id = room['_id'];
+        $log.debug('selecting room: ' + room);
         // TODO: stop/erase current dm
         rs.loading = true;
         dm.loadMachine(room, vm.socket);
@@ -75,39 +77,19 @@
           vm.socket.syncUpdates('room', vm.rooms);
           if (vm.rooms.length) { 
             console.log('loading drum config: ' + angular.toJson(vm.rooms[0]))
-            drumMachine.loadMachine(vm.rooms[0], vm.socket);
+            drumMachine.loadMachine(angular.fromJson(vm.rooms[0]), vm.socket);
             drumMachine.loadInstruments()
               .then(function () {
                 rs.loading = false;
                 rs.dm = dm;
                 rs.bpm = dm.tempo();
-                socket.socket.emit('info', {room: 0, username: 'test user'});
+                socket.socket.emit('info', {room: drumMachine.machine_id, username: 'test user'});
               });
           }
         });
     }
       // Socket listeners
       // ================
-      $onInit() {
-        $log.debug('main init!')
-        // this.$http.get('/api/rooms')
-        Rooms.query().then(response => {
-          this.rooms = response;
-
-          this.socket.syncUpdates('room', this.rooms);
-          if (this.rooms.length) { 
-            console.log('loading drum config: ' + angular.toJson(this.rooms[0]))
-            drumMachine.loadMachine(this.rooms[0]);
-            drumMachine.loadInstruments()
-              .then(function () {
-                rs.loading = false;
-                rs.dm = dm;
-                rs.bpm = dm.tempo();
-              });
-          }
-        });
-
-      }
 
     }
 angular
