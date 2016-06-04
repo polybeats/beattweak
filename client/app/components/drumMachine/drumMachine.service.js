@@ -13,7 +13,7 @@ angular
     , beatDur = 60/tempo
     , barDur = signature * beatDur
     , clock, context, rhythmIndex,
-    machine_id,
+    machine_id, name,
     playing, uiEvent;
   var channels, rows = [];
   // var events = eventQueue;
@@ -29,6 +29,7 @@ angular
     $log.debug('loadMachine, conf: ' + angular.toJson(machine));
     rows = [];
     machine_id = machine['_id'];
+    name = machine['name'];
     tempo = machine.tempo;
     signature = machine.signature;
     barRes = machine.bar_resolution;
@@ -167,6 +168,8 @@ angular
   function getContext(){
     return context;
   }
+  function getName(){return name;}
+
   // End scheduling code
 
   context = new AudioContext();
@@ -180,6 +183,7 @@ angular
     updateBeats: updateBeats,
     gridLength: getGridLength,
     getMachineId: getMachineId,
+    getName: getName,
     // currentBeat: currentBeat,
     channels: getRows,
     tempo: getTempo,

@@ -16,4 +16,7 @@
     <h4 class="bpm-text">{{bpm}} bpm</h4>
     <md-slider ng-change="updateTempo()" ng-model="bpm" min="40" max="200" aria-label="bpm adjustment" ng-disabled="playing"></md-slider>
   </div>
+  <div flex layout="row" layout-align="end center">
+    <p>in room: {{name}}</p>
+  </div>
 </div>

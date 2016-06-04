@@ -30,13 +30,12 @@
 
       $scope.selectRoom = function(room) {
         room = angular.fromJson(room);
-        room.machine_id = room['_id'];
-        $log.debug('selecting room: ' + room);
         // TODO: stop/erase current dm
         rs.loading = true;
         dm.loadMachine(room, vm.socket);
         dm.loadInstruments();
         rs.bpm = dm.tempo();
+        rs.roomName = dm.getName();
         rs.loading = false;
         // $scope.$apply()
         // TODO: update rest of displays - apply?
@@ -49,6 +48,7 @@
 
         room.$save().then(response => {
           // $log.debug('Post response' + angular.toJson(response));
+          // vm.rooms.push(angular.fromJson(response))
           $scope.selectRoom(response)
           // dm.loadMachine(response);
           // dm.loadInstruments();  

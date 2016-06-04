@@ -6,14 +6,16 @@
         <h4>Rooms</h4>
         <md-content flex="40">
             <md-list>
-                <md-list-item ng-repeat="room in rooms" ng-click="selectRoom(room)">
-                    <h4>{{ room.name }}</h4>
-                    <md-icon aria-label="delete room" class="md-light" ng-click="deleteRoom($index)">delete</md-icon>
+                <md-list-item ng-repeat="room in rooms"  layout="row" layout-align="space-between center">
+                    <h4 ng-click="browser.select($index)" ng-disabled="roomNdx === $index" flex>{{ room.name }}</h4>
+                    <md-button ng-disabled="roomNdx === $index" ng-click="browser.remove($index)" class="md-icon-button">
+                        <md-icon aria-label="delete room" class="md-light" >delete</md-icon>
+                    </md-button>
                 </md-list-item> 
             </md-list>
         </md-content>
         <input ng-model="newName"/>
-        <md-button ng-disabled="!newName.length" ng-click="createRoom(newName)">Add Room</md-button>
+        <md-button ng-disabled="!newName.length" ng-click="browser.create(newName)">Add Room</md-button>
         <!-- <div>
             <h4>Change your name</h4>
             <p>Your current user name is </p>

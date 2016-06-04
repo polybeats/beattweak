@@ -52,14 +52,14 @@ exports.default = function (socketio) {
     socket.on('room:play', function (response) {
       // onDisconnect(socket);
       socket.log('STARTED PLAYING');
-      socket.broadcast.emit('room:play');
+      socket.broadcast.emit('room:play', response);
     });
 
     // Call room:pause.
     socket.on('room:pause', function (response) {
       // onDisconnect(socket);
       socket.log('PAUSED PLAYING');
-      socket.broadcast.emit('room:pause');
+      socket.broadcast.emit('room:pause', response);
     });
 
     // Call room:beatUpdate.
@@ -73,7 +73,7 @@ exports.default = function (socketio) {
     socket.on('room:update', function (response) {
       // onDisconnect(socket);
       socket.log('UPDATED ROOM');
-      socket.broadcast.emit('room:udpate', response);
+      socket.broadcast.emit('room:update', response);
     });
 
     // Call onConnect.

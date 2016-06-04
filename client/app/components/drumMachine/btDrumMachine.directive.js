@@ -12,6 +12,7 @@
       templateUrl: 'app/components/drumMachine/drumMachine.html',
       scope: {
           'dm': '=',
+          'name': '=',
           'bpm': '='
       },
       controller: dmController,
@@ -24,6 +25,7 @@
     function dmController($scope, $rootScope, drumMachine, $log, socket) {
       var _s = $scope;
       var _dm = drumMachine;
+
 
       function roomCheck(cb) {
         return function (data) {

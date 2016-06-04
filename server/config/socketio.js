@@ -79,7 +79,7 @@ export default function(socketio) {
     socket.on('room:update', response => {
       // onDisconnect(socket);
       socket.log('UPDATED ROOM');
-      socket.broadcast.emit('room:udpate', response);
+      socket.broadcast.emit('room:update', response);
     });
 
 
