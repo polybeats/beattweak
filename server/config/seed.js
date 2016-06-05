@@ -4,11 +4,39 @@
  */
 
 'use strict';
-import Thing from '../api/thing/thing.model';
+import Room from '../api/room/room.model';
 
-Thing.find({}).remove()
+
+var roomNames = ['Bass', 'House', 'Techno', 'Dub', 'DnB'];
+var newRoom, new_mock = {
+    tempo: 140,
+    bar_resolution: 8,
+    grid_length: 16,
+    channels: [
+      
+    ]
+  };
+var ch_names = ['Kick', 'Snare', 'Hi-hat', 'Rimshot'], channel = {index: 0, beats: []}
+for(var i = 0; i < new_mock.grid_length; i++) {
+  channel.beats.push(false);
+}
+new_mock.channels = ch_names.map(function(name, i) {
+  return {name: name, index: i, beats: channel.beats};
+})
+
+Room.find({}).remove()
   .then(() => {
-    Thing.create({
+    Room.create(roomNames.map(function(name) {
+      var mock = {name: name + ' Room'};
+
+      for (var i in new_mock) {
+        mock[i] = new_mock[i];
+      }
+      return mock;
+    }));
+  });
+
+/*({
       name: 'Development Tools',
       info: 'Integration with popular tools such as Bower, Grunt, Babel, Karma, ' +
              'Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, ' +
@@ -35,6 +63,4 @@ Thing.find({}).remove()
       name: 'Deployment Ready',
       info: 'Easily deploy your app to Heroku or Openshift with the heroku ' +
              'and openshift subgenerators'
-    });
-  });
-
+    })*/

@@ -68,7 +68,6 @@
           rs.bpm = dm.tempo();
         });*/
       $scope.$on('$destroy', function() {
-        socket.unsyncUpdates('thing');
         socket.unsyncUpdates('room');
       });
 
@@ -76,14 +75,13 @@
 
           vm.socket.syncUpdates('room', vm.rooms);
           if (vm.rooms.length) { 
-            console.log('loading drum config: ' + angular.toJson(vm.rooms[0]))
             drumMachine.loadMachine(angular.fromJson(vm.rooms[0]), vm.socket);
             drumMachine.loadInstruments()
               .then(function () {
-                rs.loading = false;
-                rs.dm = dm;
                 rs.bpm = dm.tempo();
-                socket.socket.emit('info', {room: drumMachine.machine_id, username: 'test user'});
+                rs.roomName = dm.getName();
+                rs.loading = false;
+                socket.socket.emit('info', {room: drumMachine.getMachineId(), username: 'test user'});
               });
           }
         });

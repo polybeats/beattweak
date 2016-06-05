@@ -4,22 +4,19 @@
  */
 // bower:scss
 // endbower
-$font-stack: 'Roboto Slab', serif;
+$font-stack: 'Roboto', serif;
 $background-color: #333;
 $primary-color: #ccc;
+// @import url(https://fonts.googleapis.com/css?family=Roboto+Slab:300,400,700|Roboto:300,400,700,700italic,400italic);
 
-@import url(https://fonts.googleapis.com/css?family=Roboto+Slab:300,400,700|Roboto:400,700,700italic,400italic);
+@import url(https://fonts.googleapis.com/css?family=Roboto:300,400,700,700italic,400italic);
 
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url(../../bower_components/material-design-iconfont/iconfont/MaterialIcons-Regular.eot); /* For IE6-8 */
   src: local('Material Icons'),
-       local('MaterialIcons-Regular'),
-       url(../../bower_components/material-design-iconfont/iconfont/MaterialIcons-Regular.woff2) format('woff2'),
-       url(../../bower_components/material-design-iconfont/iconfont/MaterialIcons-Regular.woff) format('woff'),
-       url(../../bower_components/material-design-iconfont/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+       local('MaterialIcons-Regular');
 }
 
 .material-icons {
